@@ -553,8 +553,31 @@ Where:
 * c(t1, t2) is the number of times t1 and t2 appear together,
 * c(t1) and c(t2) — the number of times they appear separately.
 
+```python
+import math
 
-Answer here
+def PMI(docs, top=10):
+    
+    bigrams = [bigram for sentence in docs for bigram in zip(sentence[:-1], sentence[1:])]
+    bi_counter = dict()
+    for bi in bigrams:
+        bi_counter[bi] = bi_counter.get(bi, 0) + 1
+        
+    flat_docs = [word for sentence in docs for word in sentence]
+    wo_counter = dict()
+    for wo in flat_docs:
+        wo_counter[wo] = wo_counter.get(wo, 0) + 1
+    
+    pmi_counter = dict()
+    for pmi in bigrams:
+        word1 = pmi[0]
+        word2 = pmi[1]
+        pmi_counter[pmi] = math.log10(len(flat_docs)  *  (bi_counter[pmi] / (wo_counter[word1] * wo_counter[word2])))
+    
+    top_keys = [(k, v) for k, v in sorted(pmi_counter.items(), key=lambda item: item[1])]
+    
+    return top_keys[:top]
+```
 
 <br/>
 
